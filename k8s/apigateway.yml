@@ -1,0 +1,47 @@
+#Create a deployment by using the image pushed to Docker Hub
+#containerPort has to be 8761
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apigateway-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8.stackroute: apigateway-deployment
+  template:
+    metadata:
+      labels:
+        k8.stackroute: apigateway-deployment
+    spec:
+      containers:
+        - name: apigateway-service
+          image: jaswanth1234/apigateway:1.0
+          env:
+            - name: EUREKA_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: eureka-config
+                  key: eureka_url
+          ports:
+            - containerPort: 8090
+---
+#Create the service of type LoadBalancer and use the above created deployment as selector
+#port should be 8081
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: apigateway-service
+  labels:
+    app: apigateway-service
+spec:
+  type: NodePort
+  ports:
+    - nodePort: 31001
+      port: 8090
+      targetPort: 8090
+  selector:
+    k8.stackroute: apigateway-deployment
+

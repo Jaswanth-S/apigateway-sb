@@ -1,0 +1,20 @@
+# application name should be "api-gateway"
+
+server:
+   port: 8090
+spring:
+  application:
+    name: api-gateway
+
+zuul:
+  routes:
+     service_1:
+          path:  /service1/**
+          url: http://localhost:8081
+     service_2:
+       path:  /service2/**
+       url: http://localhost:8082
+
+
+# testing --- http://localhost:8090/service1/api/v1/hello
+#http://localhost:8090/service2/api/v1/hello
